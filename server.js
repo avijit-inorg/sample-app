@@ -11,10 +11,9 @@ const dbConfig = {
   host: 'aws-assignment-rds-db.cluster-c5eq8e8k6g5r.us-east-2.rds.amazonaws.com',
   user: 'root',  // replace with your DB username
   password: 'root-password',  // replace with your DB password
-  database: 'entries_db', // replace with your DB name
 };
 
-// Create a connection to the database
+// Create a connection to the MySQL server (without specifying the database yet)
 const connection = mysql.createConnection(dbConfig);
 
 // Middleware to parse incoming request bodies
@@ -24,7 +23,7 @@ app.use(bodyParser.json());
 // Serve static files (like HTML) from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Function to check and create schema and table if they don't exist
+// Function to check and create the schema and tables if they don't exist
 const checkAndCreateSchemaAndTables = () => {
   // First, ensure the database/schema exists
   connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.database}`, (err) => {
@@ -34,7 +33,7 @@ const checkAndCreateSchemaAndTables = () => {
     }
 
     // Now, use the database to check for tables and create them if necessary
-    connection.query(`USE ${dbConfig.database}`, (err) => {
+    connection.changeUser({ database: dbConfig.database }, (err) => {
       if (err) {
         console.error('Error selecting database:', err);
         return;
@@ -100,8 +99,7 @@ app.get('/get-data', (req, res) => {
   });
 });
 
-
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at ${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
