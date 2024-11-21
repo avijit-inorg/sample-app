@@ -26,14 +26,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Function to check and create the schema and tables if they don't exist
 const checkAndCreateSchemaAndTables = () => {
   // First, ensure the database/schema exists
-  connection.query(`CREATE DATABASE IF NOT EXISTS ${dbConfig.database}`, (err) => {
+  connection.query(`CREATE DATABASE IF NOT EXISTS entries_db`, (err) => {
     if (err) {
       console.error('Error creating database:', err);
       return;
     }
 
     // Now, use the database to check for tables and create them if necessary
-    connection.changeUser({ database: dbConfig.database }, (err) => {
+    connection.changeUser({ database: 'entries_db' }, (err) => {
       if (err) {
         console.error('Error selecting database:', err);
         return;
@@ -101,5 +101,5 @@ app.get('/get-data', (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at port: ${port}`);
 });
